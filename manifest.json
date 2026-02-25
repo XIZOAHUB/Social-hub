@@ -1,0 +1,42 @@
+{
+  "name": "SocialHub",
+  "short_name": "SocialHub",
+  "description": "Saare social media ek jagah — apne phone pe install karo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111318",
+  "theme_color": "#111318",
+  "orientation": "portrait-primary",
+  "categories": ["social", "utilities"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23111318' rx='40'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' font-size='110' fill='%234f8ef7'>⬡</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23111318' rx='100'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' font-size='300' fill='%234f8ef7'>⬡</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "WhatsApp",
+      "url": "/?app=whatsapp",
+      "description": "WhatsApp Web kholo"
+    },
+    {
+      "name": "Instagram",
+      "url": "/?app=instagram",
+      "description": "Instagram kholo"
+    },
+    {
+      "name": "YouTube",
+      "url": "/?app=youtube",
+      "description": "YouTube kholo"
+    }
+  ]
+}

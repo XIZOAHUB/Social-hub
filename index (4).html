@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#111318"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="SocialHub"/>
+  <title>SocialHub</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <!-- Font Awesome 6 Free -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #111318;
+      --sidebar: #1a1d24;
+      --surface: #22252f;
+      --border: #2e323e;
+      --text: #e8eaf0;
+      --muted: #7b8099;
+      --accent: #4f8ef7;
+      --radius: 14px;
+      --sidebar-w: 68px;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── TOP BAR ─── */
+    .topbar {
+      height: 52px;
+      background: var(--sidebar);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 12px;
+      flex-shrink: 0;
+      z-index: 200;
+    }
+
+    .topbar-logo {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.3px;
+    }
+
+    .topbar-appname {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topbar-appname span { color: var(--muted); font-weight: 400; }
+
+    .topbar-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .topbar-btn:hover { color: var(--text); border-color: var(--accent); }
+
+    /* ─── MAIN LAYOUT ─── */
+    .layout {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex-shrink: 0;
+      scrollbar-width: none;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+
+    .sidebar-section {
+      padding: 8px 0 4px;
+    }
+
+    .sidebar-label {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      padding: 6px 0 4px;
+      opacity: 0.7;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 10px;
+    }
+
+    .app-btn {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 4px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: 'Nunito', sans-serif;
+      transition: all 0.18s ease;
+      position: relative;
+      border-radius: 0;
+    }
+
+    .app-btn:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+
+    .app-btn.active {
+      color: white;
+      background: rgba(79,142,247,0.12);
+    }
+    .app-btn.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20%;
+      height: 60%;
+      width: 3px;
+      background: var(--accent);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .app-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      background: var(--surface);
+      transition: all 0.18s ease;
+      flex-shrink: 0;
+    }
+
+    .app-btn.active .app-icon {
+      background: var(--app-color, var(--accent));
+      color: white;
+      box-shadow: 0 4px 14px -4px var(--app-shadow, rgba(79,142,247,0.5));
+    }
+
+    .app-btn:hover:not(.active) .app-icon {
+      background: rgba(255,255,255,0.07);
+      color: white;
+    }
+
+    .app-label {
+      font-size: 0.58rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1;
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Add button */
+    .add-btn {
+      margin: 10px auto 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: 'Nunito', sans-serif;
+      padding: 6px 4px;
+      transition: color 0.2s;
+    }
+    .add-btn:hover { color: var(--accent); }
+    .add-btn .add-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 2px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .add-btn:hover .add-circle {
+      border-color: var(--accent);
+      background: rgba(79,142,247,0.08);
+      color: var(--accent);
+    }
+    .add-label { font-size: 0.58rem; font-weight: 700; }
+
+    /* ─── BROWSER PANEL ─── */
+    .browser-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* URL bar */
+    .urlbar {
+      height: 44px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      flex-shrink: 0;
+    }
+
+    .urlbar-text {
+      flex: 1;
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: default;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .urlbar-action {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .urlbar-action:hover { color: var(--text); border-color: var(--accent); }
+
+    /* Iframe */
+    .iframe-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #browser-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: white;
+    }
+
+    /* Blocked / Home screen */
+    .home-screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: var(--bg);
+      padding: 24px;
+      text-align: center;
+    }
+
+    .home-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--accent);
+    }
+
+    .home-title { font-size: 1.3rem; font-weight: 800; }
+    .home-sub { font-size: 0.82rem; color: var(--muted); max-width: 280px; line-height: 1.5; }
+
+    .open-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .open-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .blocked-notice {
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ─── HOME DEFAULT ─── */
+    .welcome-screen {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .welcome-icon {
+      font-size: 2.8rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .welcome-title { font-size: 1.5rem; font-weight: 800; }
+    .welcome-sub { font-size: 0.85rem; color: var(--muted); max-width: 260px; line-height: 1.6; }
+
+    .apps-quick {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 320px;
+      margin-top: 8px;
+    }
+
+    .quick-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text);
+      transition: all 0.18s;
+    }
+    .quick-chip:hover { border-color: var(--accent); background: rgba(79,142,247,0.1); color: var(--accent); }
+
+    /* ─── LOADING ─── */
+    .loading-bar {
+      position: absolute;
+      top: 0; left: 0;
+      height: 3px;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.4s ease;
+      z-index: 10;
+      border-radius: 2px;
+    }
+    .loading-bar.animating { animation: loadAnim 1.2s ease-in-out infinite; }
+    @keyframes loadAnim {
+      0% { width: 0%; opacity: 1; }
+      70% { width: 85%; opacity: 1; }
+      100% { width: 100%; opacity: 0; }
+    }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      z-index: 500;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: var(--sidebar);
+      border: 1px solid var(--border);
+      border-radius: 24px 24px 0 0;
+      width: 100%;
+      max-width: 480px;
+      padding: 28px 24px 32px;
+      animation: slideUp 0.3s cubic-bezier(0.34,1.3,0.64,1);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-handle {
+      width: 40px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--accent); }
+    .form-input::placeholder { color: var(--muted); }
+
+    /* Icon picker */
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      max-height: 160px;
+      overflow-y: auto;
+      padding: 2px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .icon-pick {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+    .icon-pick:hover { border-color: var(--accent); color: var(--accent); background: rgba(79,142,247,0.1); }
+    .icon-pick.selected { border-color: var(--accent); background: var(--accent); color: white; }
+
+    /* Color swatches */
+    .color-swatches {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .swatch.selected { border-color: white; transform: scale(1.15); }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { color: var(--text); }
+
+    .btn-save {
+      flex: 2;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+    .btn-save:hover { opacity: 0.88; }
+
+    /* Long-press delete */
+    .app-btn.deleting {
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
+    }
+
+    .delete-badge {
+      position: absolute;
+      top: 6px; right: 6px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #ff4444;
+      color: white;
+      font-size: 0.6rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .delete-mode .delete-badge { display: flex; }
+
+    /* Install banner */
+    .install-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(79,142,247,0.12);
+      border-bottom: 1px solid rgba(79,142,247,0.2);
+      font-size: 0.8rem;
+    }
+    .install-banner.show { display: flex; }
+    .install-banner strong { color: var(--accent); }
+
+    /* Responsive — mobile bottom bar */
+    @media (max-width: 600px) {
+      :root { --sidebar-w: 100%; }
+
+      .layout { flex-direction: column-reverse; }
+
+      .sidebar {
+        width: 100%;
+        height: 72px;
+        border-right: none;
+        border-top: 1px solid var(--border);
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 4px 6px;
+      }
+
+      .sidebar-section {
+        display: flex;
+        flex-direction: row;
+        padding: 0;
+        flex-shrink: 0;
+      }
+
+      .sidebar-label, .divider { display: none; }
+
+      .app-btn {
+        flex-direction: column;
+        min-width: 64px;
+        padding: 8px 6px;
+        border-radius: 12px;
+      }
+
+      .app-btn.active::before {
+        left: 20%;
+        top: 0;
+        width: 60%;
+        height: 3px;
+        border-radius: 0 0 3px 3px;
+      }
+
+      .add-btn {
+        flex-direction: column;
+        min-width: 64px;
+        padding: 8px 6px;
+        margin: 0;
+      }
+
+      .topbar-logo { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo"><i class="fa-solid fa-layer-group"></i> Hub</div>
+  <div class="topbar-appname" id="topAppName"><span>← Koi app select karo</span></div>
+  <button class="topbar-btn" id="installBtn" style="display:none">
+    <i class="fa-solid fa-download"></i> Install
+  </button>
+  <button class="topbar-btn" id="openExternal" style="display:none">
+    <i class="fa-solid fa-arrow-up-right-from-square"></i> Browser
+  </button>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner">
+  <i class="fa-solid fa-mobile-screen" style="color:var(--accent)"></i>
+  <div>Phone par install karo — <strong>App jaise kaam karega!</strong></div>
+  <button class="topbar-btn" id="installBannerBtn" style="margin-left:auto">
+    <i class="fa-solid fa-download"></i> Install
+  </button>
+  <button onclick="document.getElementById('installBanner').classList.remove('show')"
+    style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;">✕</button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-section" id="impSection">
+      <div class="sidebar-label">IMP</div>
+      <!-- JS se populate hoga -->
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sidebar-section" id="allSection">
+      <div class="sidebar-label">All</div>
+      <!-- JS se populate hoga -->
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sidebar-section" id="customSection">
+      <div class="sidebar-label">Mine</div>
+      <!-- Custom apps -->
+    </div>
+
+    <!-- Add button -->
+    <button class="add-btn" id="addAppBtn">
+      <div class="add-circle"><i class="fa-solid fa-plus"></i></div>
+      <span class="add-label">Add</span>
+    </button>
+
+  </aside>
+
+  <!-- BROWSER PANEL -->
+  <div class="browser-panel">
+    <!-- URL Bar -->
+    <div class="urlbar">
+      <div class="urlbar-text" id="urlbarText">socialhub — apni apps ek jagah</div>
+      <a href="#" class="urlbar-action" id="reloadBtn" title="Reload">
+        <i class="fa-solid fa-rotate-right"></i>
+      </a>
+      <a href="#" class="urlbar-action" id="externalLink" title="Browser mein kholo" target="_blank">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      </a>
+    </div>
+
+    <!-- Iframe area -->
+    <div class="iframe-wrap">
+      <div class="loading-bar" id="loadingBar"></div>
+
+      <!-- Welcome screen (default) -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-icon"><i class="fa-solid fa-layer-group"></i></div>
+        <div class="welcome-title">SocialHub</div>
+        <div class="welcome-sub">Baayi taraf se koi bhi app select karo — yahan khul jaegi.</div>
+        <div class="apps-quick" id="quickChips">
+          <!-- Quick chips from JS -->
+        </div>
+      </div>
+
+      <!-- Blocked screen -->
+      <div class="home-screen" id="blockedScreen" style="display:none">
+        <div class="home-icon" id="blockedIcon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="home-title" id="blockedTitle">App Load Nahi Hua</div>
+        <div class="home-sub" id="blockedSub">Ye website iframe mein nahi khulti. Browser mein kholo — seedha login ho jaoge.</div>
+        <a href="#" class="open-btn" id="blockedOpenBtn" target="_blank">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Browser Mein Kholo
+        </a>
+        <div class="blocked-notice">
+          <i class="fa-solid fa-circle-info"></i>
+          Security policy ki wajah se kuch sites iframe block karti hain
+        </div>
+      </div>
+
+      <!-- The iframe -->
+      <iframe id="browser-frame" src="about:blank"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+        loading="lazy"
+        style="display:none"
+      ></iframe>
+
+    </div>
+  </div>
+</div>
+
+<!-- ADD APP MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title"><i class="fa-solid fa-plus" style="color:var(--accent)"></i> Naya App Add Karo</div>
+
+    <div class="form-group">
+      <label class="form-label">App ka Naam</label>
+      <input class="form-input" id="appName" placeholder="e.g. Instagram, Notion..." maxlength="20"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Website URL</label>
+      <input class="form-input" id="appUrl" placeholder="https://..." type="url"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Icon Chuno</label>
+      <div class="icon-grid" id="iconGrid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Color Chuno</label>
+      <div class="color-swatches" id="colorSwatches">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelModal">Baad Mein</button>
+      <button class="btn-save" id="saveApp">
+        <i class="fa-solid fa-floppy-disk"></i> Save Karo
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+//  DATA — Built-in Apps
+// ════════════════════════════════════════════
+
+const IMP_APPS = [
+  { id:'whatsapp',   name:'WhatsApp',  icon:'fa-brands fa-whatsapp',   url:'https://web.whatsapp.com',        color:'#25D366', section:'imp' },
+  { id:'instagram',  name:'Instagram', icon:'fa-brands fa-instagram',  url:'https://www.instagram.com',       color:'#E1306C', section:'imp' },
+  { id:'youtube',    name:'YouTube',   icon:'fa-brands fa-youtube',    url:'https://www.youtube.com',         color:'#FF0000', section:'imp' },
+  { id:'telegram',   name:'Telegram',  icon:'fa-brands fa-telegram',   url:'https://web.telegram.org',        color:'#2CA5E0', section:'imp' },
+  { id:'twitter',    name:'X (Twitter)',icon:'fa-brands fa-x-twitter', url:'https://x.com',                   color:'#1a1a1a', section:'imp' },
+  { id:'facebook',   name:'Facebook',  icon:'fa-brands fa-facebook',   url:'https://www.facebook.com',        color:'#1877F2', section:'imp' },
+];
+
+const ALL_APPS = [
+  { id:'snapchat',   name:'Snapchat',  icon:'fa-brands fa-snapchat',   url:'https://web.snapchat.com',        color:'#FFFC00', section:'all' },
+  { id:'discord',    name:'Discord',   icon:'fa-brands fa-discord',    url:'https://discord.com/app',         color:'#5865F2', section:'all' },
+  { id:'linkedin',   name:'LinkedIn',  icon:'fa-brands fa-linkedin',   url:'https://www.linkedin.com',        color:'#0077B5', section:'all' },
+  { id:'tiktok',     name:'TikTok',    icon:'fa-brands fa-tiktok',     url:'https://www.tiktok.com',          color:'#010101', section:'all' },
+  { id:'reddit',     name:'Reddit',    icon:'fa-brands fa-reddit',     url:'https://www.reddit.com',          color:'#FF4500', section:'all' },
+  { id:'pinterest',  name:'Pinterest', icon:'fa-brands fa-pinterest',  url:'https://www.pinterest.com',       color:'#E60023', section:'all' },
+  { id:'github',     name:'GitHub',    icon:'fa-brands fa-github',     url:'https://github.com',              color:'#24292E', section:'all' },
+  { id:'spotify',    name:'Spotify',   icon:'fa-brands fa-spotify',    url:'https://open.spotify.com',        color:'#1DB954', section:'all' },
+  { id:'twitch',     name:'Twitch',    icon:'fa-brands fa-twitch',     url:'https://www.twitch.tv',           color:'#9146FF', section:'all' },
+  { id:'slack',      name:'Slack',     icon:'fa-brands fa-slack',      url:'https://app.slack.com',           color:'#4A154B', section:'all' },
+  { id:'medium',     name:'Medium',    icon:'fa-brands fa-medium',     url:'https://medium.com',              color:'#00AB6C', section:'all' },
+  { id:'threads',    name:'Threads',   icon:'fa-brands fa-threads',    url:'https://www.threads.net',         color:'#000000', section:'all' },
+  { id:'quora',      name:'Quora',     icon:'fa-brands fa-quora',      url:'https://www.quora.com',           color:'#B92B27', section:'all' },
+  { id:'tumblr',     name:'Tumblr',    icon:'fa-brands fa-tumblr',     url:'https://www.tumblr.com',          color:'#35465C', section:'all' },
+  { id:'vimeo',      name:'Vimeo',     icon:'fa-brands fa-vimeo',      url:'https://vimeo.com',               color:'#1AB7EA', section:'all' },
+];
+
+// ════════════════════════════════════════════
+//  State
+// ════════════════════════════════════════════
+let customApps  = JSON.parse(localStorage.getItem('sh_custom') || '[]');
+let activeId    = null;
+let selectedIcon = 'fa-solid fa-globe';
+let selectedColor = '#4f8ef7';
+let deferredInstall = null;
+
+// ════════════════════════════════════════════
+//  Render Sidebar
+// ════════════════════════════════════════════
+function buildSidebar() {
+  const impSec    = document.getElementById('impSection');
+  const allSec    = document.getElementById('allSection');
+  const customSec = document.getElementById('customSection');
+
+  // Clear (keep label)
+  const impLabel  = impSec.querySelector('.sidebar-label');
+  const allLabel  = allSec.querySelector('.sidebar-label');
+  const custLabel = customSec.querySelector('.sidebar-label');
+  impSec.innerHTML    = ''; impSec.appendChild(impLabel);
+  allSec.innerHTML    = ''; allSec.appendChild(allLabel);
+  customSec.innerHTML = ''; customSec.appendChild(custLabel);
+
+  IMP_APPS.forEach(app  => impSec.appendChild(makeBtn(app)));
+  ALL_APPS.forEach(app  => allSec.appendChild(makeBtn(app)));
+  customApps.forEach(app => customSec.appendChild(makeBtn(app, true)));
+
+  // Quick chips on welcome screen
+  const qc = document.getElementById('quickChips');
+  qc.innerHTML = '';
+  [...IMP_APPS.slice(0,5)].forEach(app => {
+    const chip = document.createElement('button');
+    chip.className = 'quick-chip';
+    chip.innerHTML = `<i class="${app.icon}" style="color:${app.color}"></i> ${app.name}`;
+    chip.addEventListener('click', () => openApp(app));
+    qc.appendChild(chip);
+  });
+}
+
+function makeBtn(app, canDelete = false) {
+  const btn = document.createElement('button');
+  btn.className = 'app-btn';
+  btn.dataset.id = app.id;
+  btn.style.setProperty('--app-color', app.color);
+  btn.style.setProperty('--app-shadow', hexToRgba(app.color, 0.45));
+  btn.innerHTML = `
+    <div class="app-icon">
+      <i class="${app.icon}"></i>
+    </div>
+    <span class="app-label">${app.name}</span>
+    ${canDelete ? '<div class="delete-badge"><i class="fa-solid fa-xmark"></i></div>' : ''}
+  `;
+  btn.addEventListener('click', () => openApp(app));
+  if (canDelete) {
+    const badge = btn.querySelector('.delete-badge');
+    badge.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteCustomApp(app.id);
+    });
+    btn.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      btn.classList.toggle('delete-mode');
+    });
+    // Long press for mobile
+    let timer;
+    btn.addEventListener('touchstart', () => { timer = setTimeout(() => btn.classList.add('delete-mode'), 600); }, { passive: true });
+    btn.addEventListener('touchend', () => clearTimeout(timer), { passive: true });
+  }
+  return btn;
+}
+
+function setActive(id) {
+  document.querySelectorAll('.app-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`[data-id="${id}"]`);
+  if (btn) btn.classList.add('active');
+  activeId = id;
+}
+
+// ════════════════════════════════════════════
+//  Open App
+// ════════════════════════════════════════════
+function openApp(app) {
+  setActive(app.id);
+  document.getElementById('topAppName').textContent = app.name;
+  document.getElementById('urlbarText').textContent = app.url;
+  document.getElementById('openExternal').style.display = '';
+  const extLink = document.getElementById('externalLink');
+  extLink.href = app.url;
+  document.getElementById('blockedOpenBtn').href = app.url;
+  document.getElementById('openExternal').onclick = () => window.open(app.url, '_blank');
+
+  // Hide welcome
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('blockedScreen').style.display = 'none';
+
+  // Show loading
+  const lb = document.getElementById('loadingBar');
+  lb.style.width = '0%';
+  lb.classList.add('animating');
+
+  const frame = document.getElementById('browser-frame');
+  frame.style.display = 'block';
+  frame.src = app.url;
+
+  frame.onload = () => {
+    lb.classList.remove('animating');
+    lb.style.width = '100%';
+    setTimeout(() => { lb.style.width = '0%'; }, 600);
+    // Try to detect if blocked
+    try {
+      const loc = frame.contentWindow?.location?.href;
+      if (!loc || loc === 'about:blank') throw new Error('blocked');
+    } catch(e) {
+      showBlocked(app);
+    }
+  };
+
+  frame.onerror = () => showBlocked(app);
+
+  // Fallback: check after 3s
+  setTimeout(() => {
+    try {
+      const loc = frame.contentWindow?.location;
+      if (!loc) showBlocked(app);
+    } catch(e) {
+      showBlocked(app);
+    }
+  }, 3000);
+}
+
+function showBlocked(app) {
+  document.getElementById('browser-frame').style.display = 'none';
+  const bs = document.getElementById('blockedScreen');
+  bs.style.display = 'flex';
+  document.getElementById('blockedIcon').innerHTML = `<i class="${app.icon}" style="color:${app.color}"></i>`;
+  document.getElementById('blockedTitle').textContent = app.name + ' — Browser Mein Kholo';
+  document.getElementById('blockedSub').textContent =
+    `${app.name} security reasons se yahan directly nahi khulti. Neeche button se browser mein kholo — wahan seedha login kar sakte ho.`;
+}
+
+// Reload
+document.getElementById('reloadBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  const frame = document.getElementById('browser-frame');
+  if (frame.src && frame.src !== 'about:blank') {
+    frame.src = frame.src;
+    document.getElementById('blockedScreen').style.display = 'none';
+    frame.style.display = 'block';
+  }
+});
+
+// ════════════════════════════════════════════
+//  Add App Modal
+// ════════════════════════════════════════════
+const ICONS = [
+  'fa-solid fa-globe','fa-solid fa-star','fa-solid fa-heart','fa-solid fa-fire',
+  'fa-solid fa-bolt','fa-solid fa-camera','fa-solid fa-music','fa-solid fa-gamepad',
+  'fa-solid fa-book','fa-solid fa-briefcase','fa-solid fa-shop','fa-solid fa-code',
+  'fa-solid fa-newspaper','fa-solid fa-video','fa-solid fa-comment','fa-solid fa-envelope',
+  'fa-solid fa-user','fa-solid fa-users','fa-solid fa-chart-bar','fa-solid fa-cloud',
+  'fa-brands fa-whatsapp','fa-brands fa-instagram','fa-brands fa-facebook',
+  'fa-brands fa-x-twitter','fa-brands fa-youtube','fa-brands fa-telegram',
+  'fa-brands fa-discord','fa-brands fa-tiktok','fa-brands fa-github',
+  'fa-brands fa-linkedin','fa-brands fa-reddit','fa-brands fa-spotify',
+  'fa-brands fa-twitch','fa-brands fa-slack','fa-brands fa-snapchat',
+];
+
+const COLORS = [
+  '#4f8ef7','#25D366','#E1306C','#FF0000','#2CA5E0','#1877F2',
+  '#9146FF','#FF4500','#1DB954','#FFFC00','#E60023','#00AB6C',
+  '#5865F2','#010101','#FF6600','#B92B27','#0077B5','#24292E',
+];
+
+function buildModal() {
+  // Icons
+  const grid = document.getElementById('iconGrid');
+  grid.innerHTML = '';
+  ICONS.forEach(ic => {
+    const d = document.createElement('div');
+    d.className = 'icon-pick' + (ic === selectedIcon ? ' selected' : '');
+    d.innerHTML = `<i class="${ic}"></i>`;
+    d.dataset.icon = ic;
+    d.addEventListener('click', () => {
+      document.querySelectorAll('.icon-pick').forEach(x => x.classList.remove('selected'));
+      d.classList.add('selected');
+      selectedIcon = ic;
+    });
+    grid.appendChild(d);
+  });
+
+  // Colors
+  const sw = document.getElementById('colorSwatches');
+  sw.innerHTML = '';
+  COLORS.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'swatch' + (c === selectedColor ? ' selected' : '');
+    d.style.background = c;
+    d.addEventListener('click', () => {
+      document.querySelectorAll('.swatch').forEach(x => x.classList.remove('selected'));
+      d.classList.add('selected');
+      selectedColor = c;
+    });
+    sw.appendChild(d);
+  });
+}
+
+document.getElementById('addAppBtn').addEventListener('click', () => {
+  buildModal();
+  document.getElementById('appName').value = '';
+  document.getElementById('appUrl').value = '';
+  document.getElementById('addModal').classList.add('show');
+});
+
+document.getElementById('cancelModal').addEventListener('click', () => {
+  document.getElementById('addModal').classList.remove('show');
+});
+
+document.getElementById('addModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('addModal'))
+    document.getElementById('addModal').classList.remove('show');
+});
+
+document.getElementById('saveApp').addEventListener('click', () => {
+  const name = document.getElementById('appName').value.trim();
+  let   url  = document.getElementById('appUrl').value.trim();
+  if (!name) { document.getElementById('appName').focus(); return; }
+  if (!url)  { document.getElementById('appUrl').focus(); return; }
+  if (!url.startsWith('http')) url = 'https://' + url;
+
+  const newApp = {
+    id:     'custom_' + Date.now(),
+    name,
+    icon:   selectedIcon,
+    url,
+    color:  selectedColor,
+    section:'custom'
+  };
+  customApps.push(newApp);
+  localStorage.setItem('sh_custom', JSON.stringify(customApps));
+  buildSidebar();
+  document.getElementById('addModal').classList.remove('show');
+  openApp(newApp);
+});
+
+function deleteCustomApp(id) {
+  customApps = customApps.filter(a => a.id !== id);
+  localStorage.setItem('sh_custom', JSON.stringify(customApps));
+  buildSidebar();
+  if (activeId === id) {
+    document.getElementById('welcomeScreen').style.display = '';
+    document.getElementById('browser-frame').style.display = 'none';
+    document.getElementById('blockedScreen').style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════
+//  PWA Install
+// ════════════════════════════════════════════
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstall = e;
+  document.getElementById('installBtn').style.display = '';
+  document.getElementById('installBanner').classList.add('show');
+});
+
+function triggerInstall() {
+  if (!deferredInstall) return;
+  deferredInstall.prompt();
+  deferredInstall.userChoice.then(res => {
+    if (res.outcome === 'accepted') {
+      document.getElementById('installBtn').style.display = 'none';
+      document.getElementById('installBanner').classList.remove('show');
+    }
+    deferredInstall = null;
+  });
+}
+
+document.getElementById('installBtn').addEventListener('click', triggerInstall);
+document.getElementById('installBannerBtn').addEventListener('click', triggerInstall);
+
+// ════════════════════════════════════════════
+//  Service Worker
+// ════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// ════════════════════════════════════════════
+//  Utils
+// ════════════════════════════════════════════
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// ════════════════════════════════════════════
+//  Init
+// ════════════════════════════════════════════
+buildSidebar();
+</script>
+</body>
+</html>
